@@ -32,8 +32,6 @@ public class PropostaService {
         Proposta proposta = PropostaMapper.INSTANCE.converterDtotoProposta(requestDto);
         propostaRepository.save(proposta);
 
-        notificarRabbitMq(proposta);
-
         notificacaoRabbitService.notificar(proposta,exchange);
 
         return PropostaMapper.INSTANCE.convertEntityToDto(proposta);
