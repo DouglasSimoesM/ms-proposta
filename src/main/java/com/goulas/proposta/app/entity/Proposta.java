@@ -22,6 +22,8 @@ public class Proposta {
     private int prazoPagamento;
     private Boolean aprovada;
     private boolean integrada;
+    private boolean analiseCreditoFail;
+    private boolean notificacaoFail;
     private String observacao;
 
     @OneToOne(cascade = CascadeType.PERSIST)

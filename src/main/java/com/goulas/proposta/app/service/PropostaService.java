@@ -13,18 +13,26 @@ import java.util.List;
 @Service
 public class PropostaService {
 
-    private PropostaRepository propostaRepository;
+    private final PropostaRepository propostaRepository;
 
-    private NotificacaoRabbitService notificacaoRabbitService;
+    private final NotificacaoRabbitService notificacaoRabbitService;
 
-    private String exchange;
+    private final DeadLetterQueueSchedulerService deadLetterQueueSchedulerService;
+
+    private final String exchange;
+
+    private final String exchangeDead;
 
     public PropostaService(PropostaRepository propostaRepository,
                            NotificacaoRabbitService notificacaoRabbitService,
-                           @Value("${rabbitmq.propostapendente.exchange}") String exchange) {
+                           DeadLetterQueueSchedulerService deadLetterQueueSchedulerService,
+                           @Value("${rabbitmq.propostapendente.exchange}") String exchange,
+                           @Value("${rabbitmq.propostapendentedlx.exchange}")String exchangeDead) {
         this.propostaRepository = propostaRepository;
         this.notificacaoRabbitService = notificacaoRabbitService;
+        this.deadLetterQueueSchedulerService = deadLetterQueueSchedulerService;
         this.exchange = exchange;
+        this.exchangeDead = exchangeDead;
     }
 
     public PropostaResponseDto criar(PropostaRequestDto requestDto){
@@ -33,19 +41,11 @@ public class PropostaService {
         propostaRepository.save(proposta);
 
         notificacaoRabbitService.notificar(proposta,exchange);
+        deadLetterQueueSchedulerService.notificarDeadAnaliseCredito(proposta, exchangeDead);
+        deadLetterQueueSchedulerService.notificarDeadNotificacao(proposta, exchangeDead);
 
         return PropostaMapper.INSTANCE.convertEntityToDto(proposta);
 
-    }
-
-    private void notificarRabbitMq(Proposta proposta){
-
-        try {
-            notificacaoRabbitService.notificar(proposta, exchange);
-        } catch (RuntimeException e) {
-            proposta.setIntegrada(false);
-            propostaRepository.save(proposta);
-        }
     }
 
     public List<PropostaResponseDto> obterProposta() {

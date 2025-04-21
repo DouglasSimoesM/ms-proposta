@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: ${PG_URL}
+    username: ${PG_USERNAME}
+    password: ${PG_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST}
+    port: ${SPRING_RABBITMQ_PORT}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}
+    listener:
+      simple:
+        default-requeue-rejected: 'false'
+#        retry:
+#          enable: 'true'
+#          max-attemps: '3'
+#          initial-interval: 5s
+#          multiplier: '2'
+
+
+rabbitmq:
+  propostapendente:
+    exchange: proposta-pendente.ex
+  propostaconcluida:
+    exchange: proposta-concluida.ex
+  propostapendentedlx:
+    exchange: proposta-pendente-dlx.ex
+  queue:
+    proposta:
+      concluida: proposta-concluida.ms-proposta

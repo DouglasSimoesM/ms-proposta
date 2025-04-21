@@ -23,6 +23,8 @@ public interface PropostaMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "aprovada", ignore = true)
     @Mapping(target = "integrada", constant = "true")
+    @Mapping(target = "notificacaoFail", constant = "true")
+    @Mapping(target = "analiseCreditoFail", constant = "true")
     @Mapping(target = "observacao", ignore = true)
     Proposta converterDtotoProposta(PropostaRequestDto propostaRequestDto);
 

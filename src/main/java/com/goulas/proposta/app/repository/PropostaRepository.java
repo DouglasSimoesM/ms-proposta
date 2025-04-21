@@ -10,4 +10,6 @@ import java.util.List;
 public interface PropostaRepository extends CrudRepository<Proposta, Long> {
 
     List<Proposta> findAllByIntegradaIsFalse();
+    List<Proposta> findAllByAnaliseCreditoFailIsFalse();
+    List<Proposta> findAllByNotificacaoFailIsFalse();
 }
